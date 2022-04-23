@@ -86,6 +86,9 @@ and their C++ equivalences
 ### String
 `Str` `std::string`
 
+### String Array
+`Str[]` `std::vector<string>`
+
 ### Integer
 `Int` `long int`
 
