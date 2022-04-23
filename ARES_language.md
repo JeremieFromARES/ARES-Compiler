@@ -53,12 +53,12 @@ ex:
 // Definition of the program's entry point
 Func main
   // Code
-End
+  End
 
 // Definition of a method with arguments and a return type
 Func ReturnsInt(Int x, Str y) >> Int
   // Code
-Return z
+  Return z
 ```
 
 ### Variable declaration
@@ -76,7 +76,7 @@ Obj [object name] ... End
 ex:
 Obj ThisIsAnObject
   // Code
-End
+  End
 ```
 
 ## ARES Data types
