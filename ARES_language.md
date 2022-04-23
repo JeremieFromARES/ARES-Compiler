@@ -111,12 +111,23 @@ and their C++ equivalences
 
 *As of 2022/04/23*
 
-```
-// Global
-Print( Var )
+### Print
+Writes to the console
 
-// Str
-Replace( Str, Str, Str ) >> Str
+`Print(Var input)`
+```
+Print("Hello, World!") // Outputs Hello, World
+```
+### Replace
+Replaces all instances of a string or character inside a string with another.
+
+`Replace( Str in_string, Str look_for, Str replace_with) >> Str`
+```
+Replace("xHexllxo,x Worxldx!", "x", "") // Replaces all "x" with "", result is "Hello, World!"
+Replace("This is Hello, World!", "This is ", "") // Replaces "This is" with "", result is "Hello, World!"
+Replace("x", "x", "Hello, World!") // Replaces "x" with "Hello, World!", result is "Hello, World!"
+```
+
 Split( Str, Str ) >> Str[]
 GetToken( Str, Str, Lng ) >> Str
 Append( Str, Var ) >> Str
