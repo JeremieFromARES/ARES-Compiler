@@ -127,26 +127,124 @@ Replace("xHexllxo,x Worxldx!", "x", "") // Replaces all "x" with "", result is "
 Replace("This is Hello, World!", "This is ", "") // Replaces "This is" with "", result is "Hello, World!"
 Replace("x", "x", "Hello, World!") // Replaces "x" with "Hello, World!", result is "Hello, World!"
 ```
+### Split
+Splits a string into an string array using a delimiter.
 
-Split( Str, Str ) >> Str[]
-GetToken( Str, Str, Lng ) >> Str
-Append( Str, Var ) >> Str
-Concat( Str, Str ) >> Str
-ToStr( Var ) >> Str
-Left( Str, Lng ) Str
-Right( Str, Lng ) >> Str
-Find( Str, Str ) >> Lng
-SubStr( Str, Lng, Lng) >> Str
-Length( Str ) >> Lng
-FindCount( Str, Str ) >> Lng
-Add( Str, Var ) >> Str
+`Split( Str in_string, Str delimiter) >> Str[]`
+```
+Split("Hello, World!", ",") // Result is ["Hello"," World!"]
+```
+### GetToken
+Returns a string from another using a delimiter and an index.
 
-// Int/Dbl/Lng/Sht
-Add( Dbl, Var ) >> Dbl
-Substract( Dbl, Var ) >> Dbl
-Multiply( Dbl, Var ) Dbl
-Divide( Dbl, Var ) >> Dbl
-Pow( Dbl, Var ) >> Dbl
+`GetToken( Str in_string, Str delimiter, Lng index) >> Str`
+```
+GetToken("discarded;Hello, World!;discarded", ";", 2) // Result is "Hello, World!"
+```
+### Concat
+Concatenates two strings.
+
+`Concat( Str left, Str right) >> Str`
+```
+Concat("Hello, ", "World!")
+```
+### Append
+Appends a value to a string.
+
+`Append( Str left, Var right) >> Str`
+```
+Append("Hello, World!", 0) // Result is "Hello, World!0"
+Append("Hello, ", "World!") // Result is "Hello, World!"
+```
+### ToStr
+Converts value to string.
+
+`ToStr( Var input) >> Str`
+```
+ToStr(50) // Result is "50"
+```
+### SubStr
+Gets a string using n characters from another, with an offset.
+
+`SubStr( Str in_string, Lng offset, Lng length) >> Str`
+```
+SubStr("OverHello, World!flow", 4 ,13)
+```
+### Left
+Gets a string using n characters from the left of another.
+
+`Left( Str in_string, Lng length) >> Str`
+```
+Left("Hello, World!discarded", 13) // Result is "Hello, World!"
+```
+### Right
+Gets a string using n characters from the right of another.
+
+`Right( Str in_string, Lng length) >> Str`
+```
+Right("discardedHello, World!", 13) // Result is "Hello, World!"
+```
+### Find
+Returns the position of the first match of a string inside another.
+
+`Find( Str in_string, Str to_find) >> Lng`
+```
+Find("Hello, World!", "W") // Returns 8
+```
+### FindCount
+Returns the number of matches of a string inside another.
+
+`FindCount( Str in_string, Str to_find) >> Lng`
+```
+FindCount("Hello, World", "l") // Returns 3
+```
+### Length
+Returns the number of characters inside a string.
+
+`Length( Str input) >> Lng`
+```
+Length("Hello, World!") // Returns 13
+```
+### Add
+Adds a value to another.
+
+`Add( Dbl left, Var right) >> Dbl`
+
+`Add( Str left, Var right) >> Str`
+```
+Add(50, 5) // Result is 55
+Add("Hello,", " World!") // Result is "Hello, World!"
+```
+### Substract
+Substracts two numerical values.
+
+`Substract( Dbl left, Var right) >> Dbl`
+```
+Substract(500, 250) // Result is 250
+```
+### Multiply
+Multiplies two numerical values.
+
+`Multiply( Dbl left, Var right) Dbl`
+```
+Multiply( 5, 2) // Result is 10
+```
+### Divide
+Divides two numerical values.
+
+`Divide( Dbl left, Var right) Dbl`
+```
+Divide( 10, 2) // Result is 5
+```
+### Pow
+Raises a numerical value to another.
+
+`Pow( Dbl left, Var right) Dbl`
+```
+Pow( 10, 2) // Result is 100
+```
+### Round
+
 Round( Dbl, Lng ) >> Dbl
 Max( Dbl, Dbl ) >> Dbl
 Min( Dbl, Dbl ) >> Dbl
@@ -155,6 +253,5 @@ Random( Dbl, Dbl, Lng ) >> Dbl
 
 // Bol
 Flip( Bol ) >> Bol
-```
 
 You can find more exemples at https://github.com/JeremieOverGs/ARES-Compiler/tree/main/ARES%20Transpiler/ARES%20snippets
