@@ -34,7 +34,7 @@ ARES and its standard methods should act exactly like the user thinks it should 
 
 Anything that is unnecessary should not be there in the first place.
 
-## ARES Keywords
+## ARES Syntax
 
 *As of 2022/04/23*
 
