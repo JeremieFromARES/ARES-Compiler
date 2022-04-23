@@ -10,14 +10,12 @@ Func main
 //      Print("Hello, World!")
 //      End
 
-
 //  C++
 //
 //  #include <iostream>
 //  int main() {
 //    std::cout << "Hello, World!" << std::endl;
 //  };
-
 
 //  C#
 //  
@@ -29,7 +27,6 @@ Func main
 //      }
 //  }
 
-
 //  VB.NET
 //
 //  Module [module_name]
@@ -37,7 +34,6 @@ Func main
 //          Console.WriteLine("Hello, World!")
 //      End Sub
 //  End Module
-
 
 //  Python (simple)
 //
@@ -51,11 +47,9 @@ Func main
 //  if __name__ == "__main__":
 //      main()
 
-
 //  JavaScript
 //
 //  console.log("Hello, World!")
-
 
 //  Java
 //
@@ -66,7 +60,6 @@ Func main
 //          System.out.println("Hello, World!");
 //      }
 //  }
-
 
 //  Rust
 //
