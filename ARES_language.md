@@ -1,4 +1,4 @@
-# The ARES language
+# Introduction to the ARES language
 
 The ARES language is a programation language created by Jérémie Brossard in may of 2022.
 
