@@ -9,4 +9,4 @@ Or is it ?
 
 The way ARES currently works is that it acts as an interface between the user and C++, which in theory could give the user a better experience coding while still be able to obtain an executable program with performances similar to native C++.
 
-If you want to learn more about the language in itself please read the "ARES_language.md" file inside this repositery as this present file will be dedicated to the compiler/transpiler itself.
+If you want to learn more about the language in itself please read the "ARES_language.md" file inside this repositery, as this present file will be dedicated to the compiler/transpiler itself.
