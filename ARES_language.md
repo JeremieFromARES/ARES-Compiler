@@ -8,13 +8,13 @@ The language in itself can be described as simple, understandable, with abreviat
 
 ## Guiding principles
 
->Simplicity of writing
->
->Simplicity of comprehension
->
->No compromising
->
->No quirks, no bs
+Simplicity of writing
+
+Simplicity of comprehension
+
+No compromising
+
+No quirks, no bs
 
 ### Simplicity of writing
 
@@ -38,11 +38,9 @@ Anything that is unnecessary should not be there in the first place.
 
 *As of 2022/04/23*
 
->Legend:
->
->[Variable]
->
->(Optional)
+Legend:
+[Variable]
+(Optional)
 
 ### Function / method declaration
 
