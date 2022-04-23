@@ -111,6 +111,8 @@ and their C++ equivalences
 
 ## ARES Standard methods
 
+*As of 2022/04/23*
+
 ```
 // Global
 Print( Var )
