@@ -1,0 +1,75 @@
+Func main
+    Print("Hello, World!")
+    End 
+
+//  ARES main function compared to other languages
+
+//  ARES
+//
+//  Func main
+//      Print("Hello, World!")
+//      End
+
+
+//  C++
+//
+//  #include <iostream>
+//  int main() {
+//    std::cout << "Hello, World!" << std::endl;
+//  };
+
+
+//  C#
+//  
+//  class [class_name]
+//  {
+//      static int Main()
+//      {
+//          Console.WriteLine("Hello, World!");
+//      }
+//  }
+
+
+//  VB.NET
+//
+//  Module [module_name]
+//      Sub Main()
+//          Console.WriteLine("Hello, World!")
+//      End Sub
+//  End Module
+
+
+//  Python (simple)
+//
+//  print('Hello, World!')
+//
+//  Python (complex)
+//
+//  def main():
+//      print('Hello World!')
+//
+//  if __name__ == "__main__":
+//      main()
+
+
+//  JavaScript
+//
+//  console.log("Hello, World!")
+
+
+//  Java
+//
+//  public class [class_name]
+//  {
+//      public static void main(String[] args)
+//      {
+//          System.out.println("Hello, World!");
+//      }
+//  }
+
+
+//  Rust
+//
+//  fn main() {
+//      println!("Hello, World!");
+//  }

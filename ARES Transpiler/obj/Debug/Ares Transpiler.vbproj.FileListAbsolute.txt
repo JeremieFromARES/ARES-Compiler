@@ -1,0 +1,12 @@
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\bin\Debug\Ares Transpiler.exe.config
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\bin\Debug\Ares Transpiler.exe
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\bin\Debug\Ares Transpiler.pdb
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\bin\Debug\Ares Transpiler.xml
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.vbproj.AssemblyReference.cache
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.vbproj.SuggestedBindingRedirects.cache
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares_Transpiler.Resources.resources
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.vbproj.GenerateResource.cache
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.vbproj.CoreCompileInputs.cache
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.exe
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.xml
+C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.pdb
