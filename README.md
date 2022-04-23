@@ -2,7 +2,7 @@
 A compiler/transpiler for the programming language ARES.
 
 
-ARES is a language that aims to be excessively simple while stil being crazy fast.
+ARES is a language that aims to be excessively simple while still being crazy fast.
 A hard mountain to climb, i know.
 
 Or is it ?
