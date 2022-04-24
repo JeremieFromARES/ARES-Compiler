@@ -15,7 +15,7 @@ Public Module Program
 
     Public Sub Main()
 
-        Console.WriteLine("ARES Transplier - alpha 1.0.2" & Environment.NewLine)
+        Console.WriteLine("ARES Transplier - alpha 1.0.3" & Environment.NewLine)
         Console.WriteLine("Please input the source code file's path:")
         source_file_path = Console.ReadLine()
 
