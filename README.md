@@ -13,6 +13,6 @@ If you want to learn more about the language in itself please read the "ARES_lan
 
 ## IMPORTANT: THIS PROJECT IS STILL EARLY IN DEVELOPMENT AND CERTAIN EXPECTED FEATURES MIGHT BE MISSING
 
-Currently missing features include: Operators, OOP.
+Currently missing features include: Operators, OOP, Edge case handling, Syntax checking from translator.
 
 The standard method library also needs to be expanded.
