@@ -10,3 +10,15 @@ C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.
 C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.exe
 C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.xml
 C:\Alt\PROJECTS\CODE\VB\DC+ Transpiler\DC+ Transpiler\obj\Debug\Ares Transpiler.pdb
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.exe.config
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.exe
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.pdb
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.xml
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.AssemblyReference.cache
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.SuggestedBindingRedirects.cache
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares_Transpiler.Resources.resources
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.GenerateResource.cache
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.CoreCompileInputs.cache
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.exe
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.xml
+C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.pdb

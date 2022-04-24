@@ -15,12 +15,12 @@ Public Module Program
 
     Public Sub Main()
 
-        Console.WriteLine("ARES Transplier 1.0.2" & Environment.NewLine)
+        Console.WriteLine("ARES Transplier - alpha 1.0.2" & Environment.NewLine)
         Console.WriteLine("Please input the source code file's path:")
         source_file_path = Console.ReadLine()
 
-        If source_file_path = "0" Then source_file_path = "C:\Users\jeje9\Desktop\ARES\ARES_test_code.ares"
-        If source_file_path = "1" Then source_file_path = "C:\Users\jeje9\Desktop\ARES\helloworld.ares"
+        If source_file_path = "0" Then source_file_path = "C:\Users\" & Environment.UserName & "\Desktop\ARES\ARES_test_code.ares"
+        If source_file_path = "1" Then source_file_path = "C:\Users\" & Environment.UserName & "\Desktop\ARES\helloworld.ares"
 
         Parser.Init()
 
