@@ -16,6 +16,14 @@ namespace ARES
         std::cout << input << std::endl;
     }
 
+    /// Input() >> Str
+    std::string
+    Input() {
+        std::string in;
+        std::getline(std::cin, in);
+        return in;
+    }
+
     /// Split( Str, Str ) >> Str[]
     std::vector<std::string>
     Split(std::string in_string, std::string delimiter) {

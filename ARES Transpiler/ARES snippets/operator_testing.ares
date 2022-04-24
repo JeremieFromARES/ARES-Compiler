@@ -1,0 +1,4 @@
+Func main
+    Print( 50 + Add( 50, 50) )
+    Input()
+    End

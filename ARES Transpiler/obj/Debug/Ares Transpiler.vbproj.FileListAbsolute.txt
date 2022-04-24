@@ -25,3 +25,4 @@ C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpi
 C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\bin\Debug\out\ARES.h
 C:\Users\jeje9\source\repos\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\ARES_test_code.ares
 C:\Users\jeje9\source\repos\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\helloworld.ares
+C:\Users\jeje9\source\repos\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\operator_testing.ares

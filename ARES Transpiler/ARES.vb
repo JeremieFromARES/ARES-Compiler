@@ -85,5 +85,6 @@
         "Min",
         "Average",
         "Random",
-        "Flip"}
+        "Flip",
+        "Input"}
 End Class
