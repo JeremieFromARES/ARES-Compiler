@@ -99,6 +99,8 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ARES snippets\ARES_test_code.ares" />
+    <None Include="ARES snippets\helloworld.ares" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
@@ -110,5 +112,14 @@
     </None>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="ARES snippets\ARES.h" />
+    <Content Include="ARES snippets\ARES_test_code.ares.cpp" />
+    <Content Include="ARES snippets\helloworld.ares.cpp" />
+    <AdditionalFiles Include="out\ARES.h">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AdditionalFiles>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

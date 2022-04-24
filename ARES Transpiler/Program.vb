@@ -92,9 +92,8 @@ Public Module Program
             Debug.WriteLine(line)
         Next
 
-        Directory.CreateDirectory(Path.GetTempPath + "ARES\")
-        File.WriteAllLines(Path.GetTempPath + "ARES\out.ares.cpp", CPPwriter.final_cpp_lines)
-        Console.WriteLine("Your source file's translation can be found at " + Path.GetTempPath + "ARES\out.ares.cpp")
+        File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp", CPPwriter.final_cpp_lines)
+        Console.WriteLine("Your source file's translation can be found at " + AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp")
 
         Console.ReadLine()
     End Sub
