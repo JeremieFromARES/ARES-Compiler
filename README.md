@@ -12,3 +12,7 @@ The way ARES currently works is that it acts as an interface between the user an
 If you want to learn more about the language in itself please read the "ARES_language.md" file inside this repositery, as this present file will be dedicated to the compiler/transpiler itself.
 
 ## IMPORTANT: THIS PROJECT IS STILL EARLY IN DEVELOPMENT AND CERTAIN EXPECTED FEATURES MIGHT BE MISSING
+
+Currently missing features include: Operators, OOP.
+
+The standard method library also needs to be expanded.
