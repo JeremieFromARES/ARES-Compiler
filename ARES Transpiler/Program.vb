@@ -19,8 +19,8 @@ Public Module Program
         Console.WriteLine("Please input the source code file's path:")
         source_file_path = Console.ReadLine()
 
-        If source_file_path = "0" Then source_file_path = "C:\Users\" & Environment.UserName & "\Desktop\ARES\ARES_test_code.ares"
-        If source_file_path = "1" Then source_file_path = "C:\Users\" & Environment.UserName & "\Desktop\ARES\helloworld.ares"
+        If source_file_path = "0" Then source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\ARES_test_code.ares"
+        If source_file_path = "1" Then source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\helloworld.ares"
 
         Parser.Init()
 
@@ -93,7 +93,9 @@ Public Module Program
         Next
 
         File.WriteAllLines(AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp", CPPwriter.final_cpp_lines)
-        Console.WriteLine("Your source file's translation can be found at " + AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp")
+        Console.WriteLine("")
+        Console.WriteLine("Your source file's translation can be found at:")
+        Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp")
 
         Console.ReadLine()
     End Sub

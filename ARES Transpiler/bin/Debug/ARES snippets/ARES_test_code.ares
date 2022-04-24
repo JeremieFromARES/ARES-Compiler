@@ -1,0 +1,47 @@
+// Program meant to test and explain the functionalities of the ARES language.
+
+Func main									// Two-token main function declaration.
+	StringManipulation("Hello, World!")					// Functions can be definied after the main function.
+	NumberManipulation(0)
+	End									// Explicit function yield declaration.
+
+Func StringManipulation(Str input) >> Str
+	Print("")
+	Print("String Manipulation")
+	Print("")
+	Print(Replace("xHexllxo,x Worxldx!", "x", ""))				// Replace character in string.
+	Print(Replace("x", "x", "Hello, World!"))				// Replace character by string.
+	Print(Replace("This is Hello, World!", "This is ", ""))			// Replace string in string.
+	Print(GetToken("Tokenized;Hello, World!;WOW!", ";", 2))			// Get token in string using delimiter.
+
+	Print(Append("Hello, ", "World!"))					// Append x to string.
+	Print(Concat("Hello, ", "World!"))					// Append strings.
+	Print(SubStr("OverHello, World!flow", 4 ,13))				// Get new string from the next 13 characters after offset of 4
+	Print(Left("Hello, World!Overflow", 13))				// Get new string from the 13 left-most characters
+	Print(Right("OverflowHello, World!", 13))				// Get new string from the 13 right-most characters
+
+	Print(Length("Hello, World!"))						// Returns length of string
+	Print(Find("Hello, World!", "W"))					// Returns first match in string
+	Print(FindCount("Hello, World", "l"))					// Counts number of matches in string
+	Return
+
+Func NumberManipulation(Int input) >> Int
+	Print("")
+	Print("Number Manipulation")						// Note: Most of these functions are not meant to be used directly but
+	Print("")								// 		 are aliases to common operators (ie. + - * / etc..)
+	Print(Add(0,5))								// Adds twoo integer numbers
+	Print(Add(0.2, 0.7))							// Adds twoo decimal numbers
+	Print(Add(0.2, 23))							// Adds integer to decimal number
+	Print(Substract(500, 250))						// Substratcs two integers
+	Print(Substract(250.25, 0.10))						// Substarcts two decimals
+	Print(Substract(250, 50.50))						// Substarcts decimal from integer
+	Print(Pow(10, 2))							// Raises 10 to the power of 2
+	Print(Pow(10, 2.5))							// Raises 10 to the power of 2.5
+	Print(Round(0.556, 1))							// Rounds 0.556 at the first decimal
+	Print(Max(0.5, 1))							// Returns largest number between two numbers
+	Print(Min(0.5, 1))							// Returns smallest number between two numbers
+	Print(Average(0, 1))							// Returns the average of two numbers
+	Print(Random(0, 1))							// Returns a random Dbl between 0 and 1 with an average of 0.500035895 for 1000 randoms
+	Print(Random(50, 100))							// If empty, seed is based on current time(ms) + current number of randoms generated.
+	Print(Random(0, 1, 500))						// Exemple with overloaded seed
+	Return
