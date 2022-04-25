@@ -1,5 +1,6 @@
 Func main
     Print("Hello, World!")
+    Input() // Keeps console opened
     End 
 
 //  ARES main function compared to other languages

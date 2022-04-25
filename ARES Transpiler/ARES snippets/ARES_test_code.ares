@@ -3,6 +3,7 @@
 Func main									// Two-token main function declaration.
 	StringManipulation("Hello, World!")					// Functions can be definied after the main function.
 	NumberManipulation(0)
+	Input()										// Keeps console opened
 	End									// Explicit function yield declaration.
 
 Func StringManipulation(Str input) >> Str
