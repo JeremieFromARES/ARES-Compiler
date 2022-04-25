@@ -99,10 +99,10 @@ Public Module Program
 
         End If
 
-        Dim Compiler As String = AppDomain.CurrentDomain.BaseDirectory + "\CPPcompiler\mingw64\bin\x86_64-w64-mingw32-g++.exe"
+        Dim Compiler As String = "g++"
         Dim InFile As String = AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp"
         Dim OutFile As String = AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.exe"
-        Dim Command As String = "-g " + InFile + " -o " + OutFile
+        Dim Command As String = "-g " + Chr(34) + InFile + Chr(34) + " -o " + Chr(34) + OutFile + Chr(34) + " -static"
 
         Try
             File.WriteAllLines(InFile, CPPwriter.final_cpp_lines)
@@ -117,7 +117,7 @@ Public Module Program
         Try
             Process.Start(Compiler, Command)
         Catch
-            ErrorHandler.PrintError("Critical", "g++ could not be found at " & Compiler)
+            ErrorHandler.PrintError("Critical", "a MingW (g++) installation is required with binary compilation.")
             GoTo Ending
         End Try
 
