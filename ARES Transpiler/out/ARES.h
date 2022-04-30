@@ -11,8 +11,8 @@ namespace ARES
     size_t random_counter = 0;
 
     /// Print( Var )
-    template <typename T> void
-    Print(T input) {
+    template <typename Var> void
+    Print(Var input) {
         std::cout << input << std::endl;
     }
 
@@ -88,12 +88,25 @@ namespace ARES
         return c;
     }
 
+    /// Append( Str, Str ) >> Str
+    std::string
+    Append(std::string in_string, std::string to_append) {
+        return in_string.append(to_append);
+    }
+            std::string Append(std::string in_string, const char* to_append) { return in_string.append(to_append); }
+            std::string Append(const char* in_string, std::string to_append) { return std::string(in_string).append(to_append); }
+            std::string Append(const char* in_string, const char* to_append) { return std::string(in_string).append(to_append); }
+
+    /// Append( Str, Dbl ) >> Str
+    std::string
+    Append(std::string in_string, long double to_append) {
+        return in_string.append(std::to_string(to_append));
+    }
+
     /// Append( Str, Var ) >> Str
-    template <typename T> std::string
-    Append(std::string in_string, T to_append) {
-        std::stringstream v;
-        v << in_string; v << to_append;
-        return v.str();
+    template <typename Var> std::string
+    Append(std::string in_string, Var to_append) {
+        return in_string.append(std::to_string(to_append));
     }
 
     /// Concat( Str, Str ) >> Str
@@ -111,13 +124,13 @@ namespace ARES
     /// Left( Str, Lng ) Str
     std::string
     Left(std::string in_string, size_t length) {
-        return SubStr(in_string, 0, length);
+        return ARES::SubStr(in_string, 0, length);
     }
 
     /// Right( Str, Lng ) >> Str
     std::string
     Right(std::string in_string, size_t length) {
-        return SubStr(in_string, in_string.size() - length, length);
+        return ARES::SubStr(in_string, in_string.size() - length, length);
     }
 
     /// Length( Str ) >> Lng
@@ -127,22 +140,22 @@ namespace ARES
     }
 
     /// ToStr( Var ) >> Str
-    template <typename T> std::string
-    ToStr(T input) {
+    template <typename Var> std::string
+    ToStr(Var input) {
         std::stringstream v;
         v << input;
         return v.str();
     }
 
     /// Add( Dbl, Var ) >> Dbl
-    template <typename T> long double
-    Add(long double left, T right) {
+    template <typename Var> long double
+    Add(long double left, Var right) {
         return left + right;
     }
 
     /// Add( Str, Var ) >> Str
-    template <typename T> std::string
-    Add(std::string left, T right) {
+    template <typename Var> std::string
+    Add(std::string left, Var right) {
         return ARES::Append(left, right);
     }
 
@@ -198,14 +211,12 @@ namespace ARES
     /// Random( Dbl, Dbl ) >> Dbl
     long double
     Random(long double min, long double max, size_t seed = 0) {
-        if (max > min) {
-            ++random_counter;
-            static std::default_random_engine dre;
-            if (seed == 0) { dre.seed(time(NULL) + random_counter); }
-            else { dre.seed(seed); }
-            static std::uniform_real_distribution<> urd(min, max);
-            return urd(dre);
-        } else { return 0; }
+        ++random_counter;
+        static std::uniform_real_distribution<> urd(min, max);
+        static size_t rdm = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        size_t rc = (rdm + random_counter) * (seed == 0) + seed;
+        static std::default_random_engine dre(rc);
+        return urd(dre);
     }
 
     /// Flip( Bol ) >> Bol

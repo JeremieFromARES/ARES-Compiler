@@ -1,11 +1,17 @@
 ﻿Public Class CPPwriter
 
     Public Shared cpp_lines As New List(Of String)
+    Public Shared cpp_obj_lines As New List(Of String)
     Public Shared cpp_oh_proto As New List(Of String)
     Public Shared final_cpp_lines As New List(Of String)
 
     Public Shared cpp_declared_functions As New Dictionary(Of String, FunctionObject)
     Public Shared cpp_declared_variables As New Dictionary(Of String, String)
+    Public Shared cpp_declared_objects As New List(Of String)
+
+    Public Shared cpp_pre_declared_functions As New List(Of String)
+    Public Shared cpp_pre_declared_variables As New List(Of String)
+    Public Shared cpp_pre_declared_objects As New List(Of String)
 
     Public Class FunctionObject
 
@@ -16,6 +22,9 @@
     Public Shared Sub FinilizeLines()
 
         final_cpp_lines.AddRange(cpp_oh_proto)
+        final_cpp_lines.Add("// ARES - Objects")
+        final_cpp_lines.AddRange(cpp_obj_lines)
+        final_cpp_lines.Add("")
         final_cpp_lines.Add("// ARES - Program")
         final_cpp_lines.AddRange(cpp_lines)
     End Sub
@@ -51,7 +60,7 @@
 
     Public Shared Sub InitalHeaders()
 
-        cpp_oh_proto.Add("// using the ARES language 2022, under GPL3 license.")
+        cpp_oh_proto.Add("// Using the ARES language 2022, under GPL3 license.")
         cpp_oh_proto.Add("// Transpile date: " & Format(Now, "yyyy/mm/dd hh:mm:ss"))
         cpp_oh_proto.Add("")
         cpp_oh_proto.Add("// ARES - Headers")
@@ -59,7 +68,15 @@
         cpp_oh_proto.Add("")
     End Sub
 
+    Public Shared Sub PreDeclareFunction(ByRef function_name As String)
+
+        cpp_pre_declared_functions.Add(function_name)
+
+    End Sub
+
     Public Shared Sub DeclareFunction(ByRef function_name As String, ByRef arguments As List(Of TokenCollection), Optional ByRef return_type As String = "")
+
+        Translator.indentation += 1
 
         Dim temp_line As String
         Dim temp_arg_types As New List(Of String)
@@ -121,51 +138,138 @@
         cpp_declared_functions.Add(function_name, FcObj)
     End Sub
 
-    Private Shared Sub WriteArgs(ByRef arguments As List(Of TokenCollection))
+    Public Shared Sub PreDeclareObject(ByRef object_name As String)
+
+        cpp_pre_declared_objects.Add(object_name)
 
     End Sub
 
     Public Shared Sub DeclareObject(ByRef object_name As String)
 
+        Translator.object_def = True
+
+        If Translator.indentation <> 0 Then
+
+            ErrorHandler.PrintError("Syntax", "cannot define Object outside of global scope.", Translator.line_counter)
+        End If
+
+        Translator.indentation += 1
+
         WriteCPP("class " + object_name + " {")
         WriteCPP("public:")
 
-        cpp_declared_variables.Add(object_name, "Obj")
+        cpp_declared_objects.Add(object_name)
     End Sub
 
-    Public Shared Sub DeclareVariable(ByRef variable_name As String, ByRef variable_type As String)
+    Public Shared Sub PreDeclareVariable(ByRef variable_name As String)
 
-        WriteCPP(ARES.typesToCPP(variable_type) + $" {variable_name};")
+        cpp_pre_declared_variables.Add(variable_name)
+
+    End Sub
+
+    Public Shared Sub DeclareVariable(ByRef variable_name As String, ByRef variable_type As String, ByRef arguments As List(Of TokenCollection))
+
+        Dim templine As String = String.Empty
+
+        If ARES.types.Contains(variable_type) Then
+
+            templine += ARES.typesToCPP(variable_type) + $" {variable_name}"
+
+        ElseIf cpp_pre_declared_objects.Contains(variable_type) Then
+
+            templine += variable_type + $" {variable_name}"
+
+        ElseIf ARES.standard_objects.Contains(variable_type) Then
+
+            templine += variable_type + $" {variable_name}"
+        Else
+
+            ErrorHandler.PrintError("Syntax", $"type {variable_type} does not exist.", Translator.line_counter)
+        End If
+
+        If arguments.Count > 0 Then
+            If arguments(0).type = TokenType.IsOperator Then
+
+                templine += TranslateArgs(arguments)
+            Else
+
+                ErrorHandler.PrintError("Syntax", $"expected operator after {variable_name}.", Translator.line_counter)
+            End If
+        End If
+
+        templine += ";"
+        WriteCPP(templine)
 
         cpp_declared_variables.Add(variable_name, variable_type)
     End Sub
 
     Public Shared Sub DeclaredEnd()
 
+        Translator.indentation -= 1
+
         WriteCPP("};")
+
+        If Translator.indentation = 0 Then Translator.object_def = False
     End Sub
 
     Public Shared Sub DeclareReturn()
 
+        Translator.indentation -= 1
+
         WriteCPP("return __ARES_return__;")
         WriteCPP("};")
+
+        If Translator.indentation = 0 Then Translator.object_def = False
     End Sub
 
     Public Shared Sub CallFunction(ByRef function_name As String, ByRef arguments As List(Of TokenCollection))
 
         Dim temp_line As String
 
-        If cpp_declared_functions.ContainsKey(function_name) Then
+        If cpp_pre_declared_functions.Contains(function_name) Then
 
-            temp_line = function_name ' + "("
+            temp_line = function_name
 
         ElseIf ARES.standard_functions.Contains(function_name) Then
 
-            temp_line = "ARES::" + function_name ' + "("
+            temp_line = "ARES::" + function_name
+
+        ElseIf function_name.Contains(".") Then
+
+            Dim temp_split() As String = Split(function_name, ".")
+            Dim temp_func As String = temp_split(temp_split.Count - 1)
+
+            For Each tmp In temp_split
+
+                If tmp <> temp_func Then
+
+                    If cpp_pre_declared_variables.Contains(tmp) Then
+
+                        temp_line += $"{tmp}."
+                    Else
+
+                        ErrorHandler.PrintWarning("Syntax", $"object {tmp} is not defined.", Translator.line_counter)
+                        temp_line += $"{tmp}."
+                    End If
+                Else
+
+                    temp_line += temp_func
+                End If
+            Next
         Else
 
-            temp_line = function_name ' + "("
+            'ErrorHandler.PrintWarning("Syntax", $"type {function_name} is not defined.", Translator.line_counter)
+            temp_line = function_name
         End If
+
+        temp_line += TranslateArgs(arguments)
+
+        WriteCPP(temp_line + ";")
+    End Sub
+
+    Public Shared Function TranslateArgs(ByRef arguments As List(Of TokenCollection))
+
+        Dim temp_line = String.Empty
 
         For Each arg In arguments ' Get function arguments
 
@@ -194,11 +298,9 @@
                 ElseIf ARES.standard_functions.Contains(arg.token) Then
 
                     temp_line += " ARES::" + arg.token ' + "("
-
                 Else
 
                     temp_line += arg.token
-
                 End If
 
             Else
@@ -206,11 +308,18 @@
             End If
         Next
 
-        WriteCPP(temp_line + ";")
-    End Sub
+        TranslateArgs = temp_line
+
+    End Function
 
     Public Shared Sub WriteCPP(ByRef text As String)
 
-        cpp_lines.Add(text)
+        If Translator.object_def Then
+
+            cpp_obj_lines.Add(text)
+        Else
+
+            cpp_lines.Add(text)
+        End If
     End Sub
 End Class

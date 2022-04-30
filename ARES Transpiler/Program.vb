@@ -104,6 +104,13 @@ Public Module Program
         Dim OutFile As String = AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.exe"
         Dim Command As String = "-g " + Chr(34) + InFile + Chr(34) + " -o " + Chr(34) + OutFile + Chr(34) + " -static"
 
+        If ErrorHandler.ErrorCounter > 0 Then
+
+            Console.WriteLine("")
+            Console.WriteLine($"Terminated program with {ErrorHandler.ErrorCounter} errors.")
+            GoTo Ending
+        End If
+
         Try
             File.WriteAllLines(InFile, CPPwriter.final_cpp_lines)
         Catch
@@ -112,7 +119,7 @@ Public Module Program
         End Try
 
         Console.WriteLine("")
-        Console.WriteLine("Finished translation to C++")
+        Console.WriteLine("Finished translation to C++.")
 
         Try
             Process.Start(Compiler, Command)
@@ -125,7 +132,7 @@ Public Module Program
         Console.WriteLine("Started embeded g++ with command " + Command)
 
         Console.WriteLine("")
-        Console.WriteLine("If no error occured, your executable can be found at:")
+        Console.WriteLine("The compiled executable file can be found at:")
         Console.WriteLine(OutFile)
 
 Ending:
@@ -155,6 +162,7 @@ Public Class Parser
         If translated_to = "cpp" Then
 
             Translator.TranslateCppFirstPass()
+            Translator.TranslateCppSecondPass()
             CPPwriter.DefineOverheadPrototypes()
             CPPwriter.FinilizeLines()
         End If
@@ -492,11 +500,49 @@ End Class
 
 Public Class Translator
 
+    Public Shared line_counter As Long = 0
+    Public Shared object_def As Boolean = False
+    Public Shared indentation As Integer = 0
+
     Public Shared Sub TranslateCppFirstPass()
+
+        line_counter = 0
+        object_def = False
+        indentation = 0
+
+        Dim tk_list As List(Of TokenCollection)
+
+        For Each line_object In fourth_pass_line_objects ' For Each line
+
+            line_counter += 1
+            tk_list = line_object.token_list
+
+            If tk_list(0).type = TokenType.IsKeyword Then ' Is Keyword
+
+                If tk_list(0).token = ARES.kw_function Then ' Is Function declaration
+
+                    CPPwriter.PreDeclareFunction(tk_list(1).token)
+
+                ElseIf tk_list(0).token = ARES.kw_object Then ' Is End declaration
+
+                    CPPwriter.PreDeclareObject(tk_list(1).token)
+                End If
+            ElseIf tk_list(0).type = TokenType.IsType Or CPPwriter.cpp_declared_objects.Contains(tk_list(0).token) Then ' Is variable assignment / variable declaration
+
+                CPPwriter.PreDeclareVariable(tk_list(1).token)
+
+            End If
+        Next
+    End Sub
+
+    Public Shared Sub TranslateCppSecondPass()
+
+        line_counter = 0
+        object_def = False
+        indentation = 0
 
         Dim tk_list As List(Of TokenCollection)
         Dim temp_arg_list As New List(Of TokenCollection)
-        Dim line_counter As Long = 0
 
         CPPwriter.InitalHeaders()
 
@@ -544,18 +590,23 @@ Public Class Translator
                     temp_arg_list = Helper.GetLineTokens(tk_list, 2, tk_list(1).context)
                     CPPwriter.CallFunction(tk_list(1).token, temp_arg_list)
                 End If
-            ElseIf tk_list(0).type = TokenType.IsType Then ' Is variable assignment / variable declaration
+            ElseIf tk_list(0).type = TokenType.IsType Or CPPwriter.cpp_pre_declared_objects.Contains(tk_list(0).token) Then ' Is variable assignment / variable declaration
 
-                CPPwriter.DeclareVariable(tk_list(1).token, tk_list(0).token)
+                CPPwriter.DeclareVariable(tk_list(1).token, tk_list(0).token, Helper.GetLineTokens(tk_list, 2, 0))
 
             ElseIf tk_list(0).type = TokenType.IsName Then
 
-                If CPPwriter.cpp_declared_variables.ContainsKey(tk_list(0).token) Then
+                If CPPwriter.cpp_pre_declared_variables.Contains(tk_list(0).token) Then
 
                     '
                     '   TO IMPLEMENT
                     '
                     ErrorHandler.PrintError("Unsupported", "ARES complier does not currently support variable assignment.", line_counter)
+
+                ElseIf CPPwriter.cpp_pre_declared_objects.Contains(tk_list(0).token) Then
+
+
+
                 Else
 
                     temp_arg_list = Helper.GetLineTokens(tk_list, 1, tk_list(0).context)
@@ -644,7 +695,11 @@ End Enum
 
 Public Class ErrorHandler
 
+    Public Shared Property ErrorCounter As Long = 0
+
     Public Shared Sub PrintError(ByRef context As String, ByRef description As String, Optional ByRef line As Long = -1)
+
+        ErrorCounter += 1
 
         If line = -1 Then
             Console.WriteLine("----------------------------------------------------------------------------------")
@@ -653,6 +708,18 @@ Public Class ErrorHandler
         Else
             Console.WriteLine("----------------------------------------------------------------------------------")
             Console.WriteLine("/!\ ERROR /!\ : " & context & " error, at line " & line & " : " & description)
+            Console.WriteLine("----------------------------------------------------------------------------------")
+        End If
+    End Sub
+
+    Public Shared Sub PrintWarning(ByRef context As String, ByRef description As String, Optional ByRef line As Long = -1)
+        If line = -1 Then
+            Console.WriteLine("----------------------------------------------------------------------------------")
+            Console.WriteLine("/!\ WARNING /!\ : " & context & " warning, " & description)
+            Console.WriteLine("----------------------------------------------------------------------------------")
+        Else
+            Console.WriteLine("----------------------------------------------------------------------------------")
+            Console.WriteLine("/!\ WARNING /!\ : " & context & " warning, at line " & line & " : " & description)
             Console.WriteLine("----------------------------------------------------------------------------------")
         End If
     End Sub

@@ -26,3 +26,19 @@ C:\Users\jeje9\Source\Repos\ARES-Compiler\ARES Transpiler\bin\Debug\out\ARES.h
 C:\Users\jeje9\source\repos\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\ARES_test_code.ares
 C:\Users\jeje9\source\repos\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\helloworld.ares
 C:\Users\jeje9\source\repos\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\operator_testing.ares
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\ARES_test_code.ares
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\helloworld.ares
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\ARES snippets\operator_testing.ares
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\out\ARES.h
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.exe.config
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.exe
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.pdb
+C:\vs\ARES-Compiler\ARES Transpiler\bin\Debug\Ares Transpiler.xml
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.AssemblyReference.cache
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.SuggestedBindingRedirects.cache
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares_Transpiler.Resources.resources
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.GenerateResource.cache
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.vbproj.CoreCompileInputs.cache
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.exe
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.xml
+C:\vs\ARES-Compiler\ARES Transpiler\obj\Debug\Ares Transpiler.pdb

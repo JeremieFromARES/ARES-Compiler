@@ -198,14 +198,21 @@ namespace ARES
     /// Random( Dbl, Dbl ) >> Dbl
     long double
     Random(long double min, long double max, size_t seed = 0) {
-        if (max > min) {
-            ++random_counter;
-            static std::default_random_engine dre;
-            if (seed == 0) { dre.seed(time(NULL) + random_counter); }
-            else { dre.seed(seed); }
-            static std::uniform_real_distribution<> urd(min, max);
-            return urd(dre);
-        } else { return 0; }
+        // if (max > min) {
+        //     ++random_counter;
+        //     static std::default_random_engine dre;
+        //     if (seed == 0) { dre.seed(time(NULL) + random_counter); }
+        //     else { dre.seed(seed); }
+        //     static std::uniform_real_distribution<> urd(min, max);
+        //     return urd(dre);
+        // } else { return 0; }
+        ++random_counter;
+        static size_t t = time(NULL);
+        size_t rc = (t + random_counter) * (seed == 0) + seed;
+        static std::default_random_engine dre;
+        dre.seed(rc);
+        std::uniform_real_distribution<> urd(min, max);
+        return urd(dre);
     }
 
     /// Flip( Bol ) >> Bol

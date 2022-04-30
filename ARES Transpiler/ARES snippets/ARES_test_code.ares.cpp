@@ -13,6 +13,7 @@ long int NumberManipulation( long int x1);
 int main() {
 StringManipulation( "Hello, World!");
 NumberManipulation(0);
+ARES::Input();
 };
 std::string StringManipulation(   std::string input) {
 std::string __ARES_return__;

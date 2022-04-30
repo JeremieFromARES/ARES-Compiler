@@ -1,24 +1,24 @@
 ﻿Public Class ARES
 
-    Public Shared Property string_indicator As Char = Chr(34)
-    Public Shared Property arg_start As Char = "("
-    Public Shared Property arg_end As Char = ")"
-    Public Shared Property arg_delimiter As Char = ","
-    Public Shared Property token_delimiter As Char = " "
+    Public Const string_indicator As Char = Chr(34)
+    Public Const arg_start As Char = "("
+    Public Const arg_end As Char = ")"
+    Public Const arg_delimiter As Char = ","
+    Public Const token_delimiter As Char = " "
 
-    Public Shared Property kw_function As String = "Func"
-    Public Shared Property kw_end As String = "End"
-    Public Shared Property kw_return As String = "Return"
-    Public Shared Property kw_if As String = "If"
-    Public Shared Property kw_else As String = "Else"
-    Public Shared Property kw_for As String = "For"
-    Public Shared Property kw_while As String = "While"
-    Public Shared Property kw_returns_type As String = ">>"
-    Public Shared Property kw_object As String = "Obj"
-    Public Shared Property kw_let As String = "Let"
-    Public Shared Property kw_call As String = "Call"
+    Public Const kw_function As String = "Func"
+    Public Const kw_end As String = "End"
+    Public Const kw_return As String = "Return"
+    Public Const kw_if As String = "If"
+    Public Const kw_else As String = "Else"
+    Public Const kw_for As String = "For"
+    Public Const kw_while As String = "While"
+    Public Const kw_returns_type As String = ">>"
+    Public Const kw_object As String = "Obj"
+    Public Const kw_let As String = "Let"
+    Public Const kw_call As String = "Call"
 
-    Public Shared Property types As List(Of String) = New List(Of String) From {
+    Public Shared types As List(Of String) = New List(Of String) From {
         "Str",
         "Int",
         "Sht",
@@ -29,7 +29,7 @@
         "Bol",
         "Nul"}
 
-    Public Shared Property typesToCPP As Dictionary(Of String, String) = New Dictionary(Of String, String) From {
+    Public Shared typesToCPP As Dictionary(Of String, String) = New Dictionary(Of String, String) From {
         {"Str", "std::string"},
         {"Int", "long int"},
         {"Sht", "int"},
@@ -40,7 +40,7 @@
         {"Bol", "bool"},
         {"Nul", "void"}}
 
-    Public Shared Property keywords As List(Of String) = New List(Of String) From {
+    Public Shared keywords As List(Of String) = New List(Of String) From {
         "Func",
         "End",
         "Return",
@@ -53,7 +53,7 @@
         ">>",
         "Obj"}
 
-    Public Shared Property operators As List(Of String) = New List(Of String) From {
+    Public Shared operators As List(Of String) = New List(Of String) From {
         "+",
         "-",
         "=",
@@ -61,7 +61,7 @@
         "^",
         "*"}
 
-    Public Shared Property standard_functions As List(Of String) = New List(Of String) From {
+    Public Shared standard_functions As List(Of String) = New List(Of String) From {
         "Print",
         "Split",
         "GetToken",
@@ -87,4 +87,8 @@
         "Random",
         "Flip",
         "Input"}
+
+    Public Shared standard_objects As List(Of String) = New List(Of String) From {
+        "System",
+        "Application"}
 End Class

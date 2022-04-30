@@ -1,4 +1,16 @@
 Func main
     Print( 50 + Add( 50, 50) )
+    TestObject to
+    to.test()
     Input()
+    End
+Obj TestObject
+    Func test
+        Print("Test")
+        End
+    End
+Obj TestObject2
+    Func test2
+        Print("Test2")
+        End
     End
