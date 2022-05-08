@@ -80,6 +80,7 @@
 
         Dim temp_line As String
         Dim temp_arg_types As New List(Of String)
+        Dim mainfunc As Boolean = False
 
         If function_name <> "main" Then
             If return_type <> "" Then ' Get return type
@@ -92,6 +93,7 @@
         Else
 
             temp_line = "int"
+            mainfunc = True
         End If
 
         temp_line += $" {function_name}( "
@@ -99,8 +101,6 @@
         For Each arg In arguments ' Get function arguments
 
             temp_line += " "
-
-            Debug.Print(arg.token)
 
             If arg.type = TokenType.IsType Then
 
@@ -129,6 +129,11 @@
         If return_type <> "" Then
 
             WriteCPP(ARES.typesToCPP(return_type) + " __ARES_return__;")
+        End If
+
+        If mainfunc Then
+
+            WriteCPP("ARES::Init();")
         End If
 
         Dim FcObj As New FunctionObject
@@ -203,6 +208,29 @@
         cpp_declared_variables.Add(variable_name, variable_type)
     End Sub
 
+    Public Shared Sub AssignToVariable(ByRef variable_name As String, ByRef arguments As List(Of TokenCollection))
+
+        Dim templine As String = String.Empty
+
+        templine += variable_name
+
+        If arguments.Count > 0 Then
+            If arguments(0).type = TokenType.IsOperator Then
+
+                templine += TranslateArgs(arguments)
+            Else
+
+                ErrorHandler.PrintError("Syntax", $"expected operator after {variable_name}.", Translator.line_counter)
+            End If
+        Else
+
+            ErrorHandler.PrintError("Syntax", $"expected operator after {variable_name}.", Translator.line_counter)
+        End If
+
+        templine += ";"
+        WriteCPP(templine)
+    End Sub
+
     Public Shared Sub DeclaredEnd()
 
         Translator.indentation -= 1
@@ -212,9 +240,19 @@
         If Translator.indentation = 0 Then Translator.object_def = False
     End Sub
 
-    Public Shared Sub DeclareReturn()
+    Public Shared Sub DeclareReturn(ByRef arguments As List(Of TokenCollection))
 
         Translator.indentation -= 1
+
+        If arguments.Count > 0 Then
+
+            Dim templine = "__ARES_return__ = "
+            templine += TranslateArgs(arguments)
+            templine += ";"
+            WriteCPP(templine)
+        Else
+            ErrorHandler.PrintError("Syntax", $"expected operator after Return.", Translator.line_counter)
+        End If
 
         WriteCPP("return __ARES_return__;")
         WriteCPP("};")
@@ -236,26 +274,7 @@
 
         ElseIf function_name.Contains(".") Then
 
-            Dim temp_split() As String = Split(function_name, ".")
-            Dim temp_func As String = temp_split(temp_split.Count - 1)
-
-            For Each tmp In temp_split
-
-                If tmp <> temp_func Then
-
-                    If cpp_pre_declared_variables.Contains(tmp) Then
-
-                        temp_line += $"{tmp}."
-                    Else
-
-                        ErrorHandler.PrintWarning("Syntax", $"object {tmp} is not defined.", Translator.line_counter)
-                        temp_line += $"{tmp}."
-                    End If
-                Else
-
-                    temp_line += temp_func
-                End If
-            Next
+            temp_line += OOPhandler(function_name)
         Else
 
             'ErrorHandler.PrintWarning("Syntax", $"type {function_name} is not defined.", Translator.line_counter)
@@ -266,6 +285,99 @@
 
         WriteCPP(temp_line + ";")
     End Sub
+
+    Public Shared Sub DeclareIf(ByRef arguments As List(Of TokenCollection), Optional ByRef prefix As String = "")
+
+        Translator.indentation += 1
+
+        Dim temp_line As String
+        temp_line = prefix
+
+        Dim temp_tokens As List(Of TokenCollection) = ConditionFormater(arguments)
+
+        If temp_tokens.Count <> 0 Then
+
+            temp_line += $"if ({TranslateArgs(temp_tokens)}) "
+        End If
+
+        temp_line += "{"
+        WriteCPP(temp_line)
+    End Sub
+
+    Public Shared Sub DeclareLoop(ByRef arguments As List(Of TokenCollection))
+
+        Translator.indentation += 1
+
+        Dim temp_line As String
+
+        Dim temp_tokens As List(Of TokenCollection) = ConditionFormater(arguments)
+
+        If temp_tokens.Count <> 0 Then
+
+            temp_line += $"while ({TranslateArgs(temp_tokens)}) "
+        Else
+
+            temp_line += "while (1) "
+        End If
+
+        temp_line += "{"
+        WriteCPP(temp_line)
+    End Sub
+
+    Public Shared Function ConditionFormater(ByRef arguments As List(Of TokenCollection)) As List(Of TokenCollection)
+
+        Dim temp_tokens As List(Of TokenCollection) = arguments
+
+        For Each arg In temp_tokens
+
+            If arg.type = TokenType.IsOperator Then
+
+                If arg.token = "=" Then
+
+                    arg.token = "=="
+                End If
+            End If
+        Next
+
+        ConditionFormater = temp_tokens
+    End Function
+
+    Public Shared Function OOPhandler(ByRef function_name As String) As String
+
+        Dim temp_line As String = String.Empty
+
+        Dim temp_split() As String = Split(function_name, ".")
+        Dim temp_func As String = temp_split(temp_split.Count - 1)
+
+        For Each tmp In temp_split
+
+            If tmp <> temp_func Then
+
+                If cpp_declared_variables.ContainsKey(tmp) Then
+
+                    temp_line += $"{tmp}."
+
+                ElseIf ARES.standard_objects.Contains(tmp) Then
+
+                    temp_line += $"ARES::{tmp}::"
+
+                Else
+
+                    Dim x As Integer
+                    If Not Integer.TryParse(tmp, x) Then
+                        ErrorHandler.PrintWarning("Syntax", $"object {tmp} is not defined.", Translator.line_counter)
+                    End If
+                    temp_line += $"{tmp}."
+                End If
+            Else
+
+                temp_line += temp_func
+            End If
+        Next
+
+        OOPhandler = temp_line
+
+    End Function
 
     Public Shared Function TranslateArgs(ByRef arguments As List(Of TokenCollection))
 
@@ -287,17 +399,25 @@
 
             ElseIf arg.type = TokenType.IsName Then
 
+                Dim temp_split() As String = Split(arg.token, ".")
+                Dim temp_func As String = temp_split(temp_split.Count - 1)
+
                 If cpp_declared_functions.ContainsKey(arg.token) Then
 
-                    temp_line += " " + arg.token ' + "("
+                    temp_line += $" {arg.token}"
 
                 ElseIf cpp_declared_variables.ContainsKey(arg.token) Then
 
-                    temp_line += " " + arg.token
+                    temp_line += $" {arg.token}"
 
                 ElseIf ARES.standard_functions.Contains(arg.token) Then
 
-                    temp_line += " ARES::" + arg.token ' + "("
+                    temp_line += $" ARES::{arg.token}"
+
+                ElseIf arg.token.Contains(".") Then
+
+                    temp_line += OOPhandler(arg.token)
+
                 Else
 
                     temp_line += arg.token

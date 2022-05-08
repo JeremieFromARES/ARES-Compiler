@@ -11,8 +11,7 @@
     Public Const kw_return As String = "Return"
     Public Const kw_if As String = "If"
     Public Const kw_else As String = "Else"
-    Public Const kw_for As String = "For"
-    Public Const kw_while As String = "While"
+    Public Const kw_loop As String = "Loop"
     Public Const kw_returns_type As String = ">>"
     Public Const kw_object As String = "Obj"
     Public Const kw_let As String = "Let"
@@ -46,12 +45,14 @@
         "Return",
         "If",
         "Else",
-        "For",
-        "While",
+        "Loop",
         "Let",
         "Call",
         ">>",
-        "Obj"}
+        "Obj",
+        "Not",
+        "And",
+        "Or"}
 
     Public Shared operators As List(Of String) = New List(Of String) From {
         "+",
@@ -59,15 +60,16 @@
         "=",
         "/",
         "^",
-        "*"}
+        "*",
+        "!"}
 
     Public Shared standard_functions As List(Of String) = New List(Of String) From {
         "Print",
+        "Input",
         "Split",
         "GetToken",
         "Replace",
         "Append",
-        "Concat",
         "SubStr",
         "Left",
         "Right",
@@ -86,9 +88,12 @@
         "Average",
         "Random",
         "Flip",
-        "Input"}
+        "Date",
+        "Time",
+        "TimeStamp"}
 
     Public Shared standard_objects As List(Of String) = New List(Of String) From {
-        "System",
-        "Application"}
+        "Sys",
+        "App",
+        "CPP"}
 End Class

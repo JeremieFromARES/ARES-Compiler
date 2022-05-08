@@ -13,96 +13,123 @@ Public Module Program
     Public third_pass_line_objects As New List(Of LineObject)
     Public fourth_pass_line_objects As New List(Of LineObject)
 
-    Public Sub Main()
+    Public Sub Main(ByVal args() As String)
 
-        Console.WriteLine("ARES Transplier - alpha 1.0.6" & Environment.NewLine)
-        Console.WriteLine("Please input the source code file's path or type 0, 1 to try out code snippets.")
-        source_file_path = Console.ReadLine()
+        Dim IsFromCL As Boolean = (args.Count <> 0)
+        Dim showtranslatorresults As String
 
-        Select Case source_file_path ' Code Snippets
-            Case "0"
-                source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\ARES_test_code.ares"
-            Case "1"
-                source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\helloworld.ares"
-            Case "2"
-                source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\operator_testing.ares"
-        End Select
-
-        Console.WriteLine("Show parser/transpiler results? (debug purposes). [Y/n]")
-        Dim showtranslatorresults As String = Console.ReadLine()
-
-        Parser.Init()
-
-        Dim showresults As Boolean = False
-
-        Select Case showtranslatorresults
-            Case "y"
-                showresults = True
-            Case "Y"
-                showresults = True
-        End Select
-
-        If showresults Then
-
-            Dim line_object As LineObject
-            Dim tk As TokenCollection
-            Dim str As String
-
-            Console.WriteLine("")
-            Console.WriteLine("Parser results:")
-            Console.WriteLine("")
-
-            For Each line_object In fourth_pass_line_objects ' Debug
-
-                For Each tk In line_object.token_list
-
-                    str = String.Empty
-                    If tk.type = TokenType.IsString Then
-                        str = " [STR]"
-                    ElseIf tk.type = TokenType.UnParsed Then
-                        str = " [UNP]"
-                    ElseIf tk.type = TokenType.IsType Then
-                        str = " [TYP]"
-                    ElseIf tk.type = TokenType.IsKeyword Then
-                        str = " [KEY]"
-                    ElseIf tk.type = TokenType.IsOperator Then
-                        str = " [OPE]"
-                    ElseIf tk.type = TokenType.IsName Then
-                        str = " [NAM]"
-                    ElseIf tk.type = TokenType.ArgStart Then
-                        str = " [ARGSTA]"
-                    ElseIf tk.type = TokenType.Terminator Then
-                        str = " [TER]"
-                    ElseIf tk.type = TokenType.ArgDelimiter Then
-                        str = " [ARGDEL]"
-                    End If
-                    If tk.context = 0 Then
-                        str += " "
-                    ElseIf tk.context <> 0 Then
-                        str += "{" & tk.context & "} "
-                    End If
-
-                    Console.Write(str & tk.token)
-                Next
-
-                Console.WriteLine("")
-            Next
-
-            Console.WriteLine("")
-            Console.WriteLine("Translator results:")
-            Console.WriteLine("")
-
-            For Each line In CPPwriter.final_cpp_lines ' Debug
-
-                Console.WriteLine(line)
-            Next
-
-        End If
+        Console.WriteLine("ARES Transplier - alpha 1.0.7" & Environment.NewLine)
 
         Dim Compiler As String = "g++"
         Dim InFile As String = AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp"
         Dim OutFile As String = AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.exe"
+
+        If IsFromCL Then
+
+            source_file_path = args(0)
+            OutFile = args(1)
+        End If
+
         Dim Command As String = "-g " + Chr(34) + InFile + Chr(34) + " -o " + Chr(34) + OutFile + Chr(34) + " -static"
+
+        If Not IsFromCL Then
+
+            Console.WriteLine("Please input the source code file's path or type 0, 1 to try out code snippets.")
+            source_file_path = Console.ReadLine()
+
+            Select Case source_file_path ' Code Snippets
+                Case "0"
+                    source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\ARES_test_code.ares"
+                Case "1"
+                    source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\helloworld.ares"
+                Case "2"
+                    source_file_path = AppDomain.CurrentDomain.BaseDirectory & "ARES snippets\operator_testing.ares"
+            End Select
+
+            Console.WriteLine("Show parser/transpiler results? (debug purposes). [Y/n]")
+            showtranslatorresults = Console.ReadLine()
+        End If
+
+        Parser.Init()
+
+        If Not IsFromCL Then
+
+            Dim showresults As Boolean = False
+
+            Select Case showtranslatorresults
+                Case "y"
+                    showresults = True
+                Case "Y"
+                    showresults = True
+            End Select
+
+            If showresults Then
+
+                Dim line_object As LineObject
+                Dim tk As TokenCollection
+                Dim str As String
+
+                Console.WriteLine("")
+                Console.WriteLine("Parser results:")
+                Console.WriteLine("")
+
+                For Each line_object In second_pass_line_objects ' Debug
+
+                    For Each tk In line_object.token_list
+
+                        str = String.Empty
+                        If tk.type = TokenType.IsString Then
+                            str = " [STR]"
+                        ElseIf tk.type = TokenType.UnParsed Then
+                            str = " [UNP]"
+                        ElseIf tk.type = TokenType.IsType Then
+                            str = " [TYP]"
+                        ElseIf tk.type = TokenType.IsKeyword Then
+                            str = " [KEY]"
+                        ElseIf tk.type = TokenType.IsOperator Then
+                            str = " [OPE]"
+                        ElseIf tk.type = TokenType.IsName Then
+                            str = " [NAM]"
+                        ElseIf tk.type = TokenType.ArgStart Then
+                            str = " [ARGSTA]"
+                        ElseIf tk.type = TokenType.Terminator Then
+                            str = " [ARGTER]"
+                        ElseIf tk.type = TokenType.ArgDelimiter Then
+                            str = " [ARGDEL]"
+                        End If
+                        If tk.context = 0 Then
+                            str += " "
+                        ElseIf tk.context <> 0 Then
+                            str += "{" & tk.context & "} "
+                        End If
+
+                        Console.Write(str & tk.token)
+                    Next
+
+                    Console.WriteLine("")
+                Next
+
+                Console.WriteLine("")
+                Console.WriteLine("Translator results:")
+                Console.WriteLine("")
+
+                For Each line In CPPwriter.final_cpp_lines ' Debug
+
+                    Console.WriteLine(line)
+                Next
+
+                'Console.WriteLine("")
+                'For Each line In third_pass_line_objects ' Debug
+
+                '    For Each token In line.token_list
+                '        Console.Write(token.token + " ")
+                '    Next
+                '    Console.WriteLine("")
+                'Next
+
+            End If
+
+        End If
 
         If ErrorHandler.ErrorCounter > 0 Then
 
@@ -124,7 +151,7 @@ Public Module Program
         Try
             Process.Start(Compiler, Command)
         Catch
-            ErrorHandler.PrintError("Critical", "a MingW (g++) installation is required with binary compilation.")
+            ErrorHandler.PrintError("Critical", "a MingW (g++) installation is required for executable compilation.")
             GoTo Ending
         End Try
 
@@ -137,7 +164,9 @@ Public Module Program
 
 Ending:
 
-        Console.ReadLine()
+        If Not IsFromCL Then
+            Console.ReadLine()
+        End If
     End Sub
 End Module
 
@@ -150,11 +179,11 @@ Public Class Parser
         ParseFirstPass() ' Separates Strings and non-Strings
         source_lines = Nothing
         ParseSecondPass() ' Separates arguments
-        first_pass_line_objects = Nothing
+        ' first_pass_line_objects = Nothing
         ParseThirdPass() ' Separates tokens using spaces and formating
-        second_pass_line_objects = Nothing
+        ' second_pass_line_objects = Nothing
         ParseFourthPass() ' Separates Keywords, Names, Types and Operators
-        third_pass_line_objects = Nothing
+        ' third_pass_line_objects = Nothing
 
         Console.WriteLine("")
         Console.WriteLine("Finished ARES parsing")
@@ -316,11 +345,23 @@ Public Class Parser
                                         argument = String.Empty
                                     End If
 
+                                    ' TEMPORARY
+                                    If Not String.IsNullOrEmpty(temp_token) Then
+                                        Dim tc As New TokenCollection
+                                        tc.token = temp_token.Trim()
+                                        tc.type = TokenType.UnParsed
+                                        tc.context = arg_context
+                                        parsed_line.token_list.Add(tc)
+                                        temp_token = String.Empty
+                                    End If
+
                                     Dim tc2 As New TokenCollection ' If end of in argument brackets, put current arguments to line_object
                                     tc2.token = String.Empty
                                     tc2.type = TokenType.Terminator
                                     tc2.context = arg_context
                                     parsed_line.token_list.Add(tc2)
+
+                                    Debug.Print(line_char)
 
                                     arg_context -= 1
 
@@ -367,8 +408,11 @@ Public Class Parser
                             End If
                         Else
 
+                            Debug.Print(tk.token)
+                            Debug.Print(temp_token)
+
                             If Not String.IsNullOrEmpty(temp_token) Then
-                                Dim tc As New TokenCollection ' If start of string, put temp_token to line_object
+                                Dim tc As New TokenCollection
                                 tc.token = temp_token.Trim()
                                 tc.type = TokenType.UnParsed
                                 tc.context = arg_context
@@ -418,13 +462,6 @@ Public Class Parser
                 If tk.type = TokenType.UnParsed Then
 
                     Dim temp_token = tk.token
-                    ' Formating
-                    For Each ARES_op In ARES.operators
-
-                        If tk.token.Contains(ARES_op) Then
-                            temp_token = temp_token.Replace(ARES_op, ARES.token_delimiter + ARES_op + ARES.token_delimiter)
-                        End If
-                    Next
 
                     Dim split_tokens() As String = temp_token.Split(ARES.token_delimiter)
 
@@ -557,7 +594,7 @@ Public Class Translator
                 If tk_list(0).token = ARES.kw_function Then ' Is Function declaration
 
                     Dim return_type As String = ""
-                    temp_arg_list = Helper.GetLineTokens(tk_list, 2, 0)
+                    temp_arg_list = Helper.GetFuncArgs(tk_list, 2, 0)
 
                     If tk_list(tk_list.Count - 2).token = ARES.kw_returns_type Then
 
@@ -570,25 +607,61 @@ Public Class Translator
 
                     CPPwriter.DeclaredEnd()
 
-                ElseIf tk_list(0).token = ARES.kw_object Then ' Is End declaration
+                ElseIf tk_list(0).token = ARES.kw_object Then ' Is Object declaration
 
                     CPPwriter.DeclareObject(tk_list(1).token)
 
-                ElseIf tk_list(0).token = ARES.kw_return Then ' Is End declaration
+                ElseIf tk_list(0).token = ARES.kw_return Then ' Is Return declaration
 
-                    CPPwriter.DeclareReturn()
+                    CPPwriter.DeclareReturn(Helper.GetLineTokens(tk_list, 1, 0))
 
                 ElseIf tk_list(0).token = ARES.kw_let Then ' Is variable assignment
 
-                    '
-                    '   TO IMPLEMENT
-                    '
-                    ErrorHandler.PrintError("Unsupported", "ARES complier does not currently support variable assignment.", line_counter)
+                    CPPwriter.AssignToVariable(tk_list(1).token, Helper.GetLineTokens(tk_list, 2, 0))
 
                 ElseIf tk_list(0).token = ARES.kw_call Then ' Is Function call
 
-                    temp_arg_list = Helper.GetLineTokens(tk_list, 2, tk_list(1).context)
+                    temp_arg_list = Helper.GetFuncArgs(tk_list, 2, tk_list(1).context)
                     CPPwriter.CallFunction(tk_list(1).token, temp_arg_list)
+
+                ElseIf tk_list(0).token = ARES.kw_loop Then
+
+                    Dim linetokens As New List(Of TokenCollection)
+                    linetokens = Helper.GetLineTokens(tk_list, 1, 0)
+                    CPPwriter.DeclareLoop(linetokens)
+
+                ElseIf tk_list(0).token = ARES.kw_if Or tk_list(0).token = ARES.kw_else Then
+
+                    Dim temp_prefix As String = ""
+                    Dim linetokens As New List(Of TokenCollection)
+
+                    If tk_list(0).token = ARES.kw_else Then
+                        temp_prefix = "} else "
+                    End If
+
+                    If tk_list.Count > 1 Then
+                        If tk_list(1).type = TokenType.IsKeyword Then
+
+                            linetokens = Helper.GetLineTokens(tk_list, 2, 0)
+                        Else
+
+                            linetokens = Helper.GetLineTokens(tk_list, 1, 0)
+                        End If
+                    End If
+
+                    If linetokens.Count <= 1 Then
+
+                        If tk_list(0).token = ARES.kw_if Then
+
+                            ErrorHandler.PrintError("Syntax", "Expected condition after If.", line_counter)
+                        Else
+
+                            CPPwriter.DeclareIf(New List(Of TokenCollection), temp_prefix)
+                        End If
+                    Else
+
+                        CPPwriter.DeclareIf(linetokens, temp_prefix)
+                    End If
                 End If
             ElseIf tk_list(0).type = TokenType.IsType Or CPPwriter.cpp_pre_declared_objects.Contains(tk_list(0).token) Then ' Is variable assignment / variable declaration
 
@@ -598,18 +671,14 @@ Public Class Translator
 
                 If CPPwriter.cpp_pre_declared_variables.Contains(tk_list(0).token) Then
 
-                    '
-                    '   TO IMPLEMENT
-                    '
-                    ErrorHandler.PrintError("Unsupported", "ARES complier does not currently support variable assignment.", line_counter)
+                    CPPwriter.AssignToVariable(tk_list(0).token, Helper.GetLineTokens(tk_list, 1, 0))
 
                 ElseIf CPPwriter.cpp_pre_declared_objects.Contains(tk_list(0).token) Then
 
 
-
                 Else
 
-                    temp_arg_list = Helper.GetLineTokens(tk_list, 1, tk_list(0).context)
+                    temp_arg_list = Helper.GetLineTokens(tk_list, 1, tk_list(0).context) ' TO CHANGE BACK TO getFuncArgs IF NOT WORKING
                     CPPwriter.CallFunction(tk_list(0).token, temp_arg_list)
                 End If
             ElseIf tk_list(0).type = TokenType.IsOperator Then
@@ -623,6 +692,28 @@ End Class
 Public Class Helper
 
     Public Shared Function GetLineTokens(ByRef token_list As List(Of TokenCollection), Optional ByVal start_index As Integer = 1, Optional ByVal current_context As Short = 0) As List(Of TokenCollection)
+
+        Dim ReturnArray As New List(Of TokenCollection)
+
+        If start_index >= token_list.Count Then Return ReturnArray
+
+        For i = start_index To token_list.Count - 1
+
+            ReturnArray.Add(token_list(i))
+
+            If token_list(i).type = TokenType.Terminator Then
+
+                If token_list(i).context - 1 = 0 Then
+
+                    Exit For
+                End If
+            End If
+        Next i
+
+        Return ReturnArray
+    End Function
+
+    Public Shared Function GetFuncArgs(ByRef token_list As List(Of TokenCollection), Optional ByVal start_index As Integer = 1, Optional ByVal current_context As Short = 0) As List(Of TokenCollection)
 
         Dim ReturnArray As New List(Of TokenCollection)
 

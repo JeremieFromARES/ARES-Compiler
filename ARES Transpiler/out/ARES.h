@@ -8,12 +8,32 @@
 
 namespace ARES
 {
-    size_t random_counter = 0;
+    // Private Globals
+    namespace {
+        bool initialized = false;
+        size_t random_counter = 0;
+        size_t random_default_seed = 0;
+    }
+
+    /// Private Init()
+    void
+    Init() {
+        if (initialized) {return;}
+        initialized = true;
+        random_default_seed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    }
+
+    /// Print( Str )
+    void
+    Print(std::string input) {
+        std::cout << std::string(input).append("\n");
+    }
+            void Print(const char* input) { std::cout << std::string(input).append("\n"); }
 
     /// Print( Var )
     template <typename Var> void
     Print(Var input) {
-        std::cout << input << std::endl;
+        std::cout << std::to_string(input).append("\n");
     }
 
     /// Input() >> Str
@@ -47,7 +67,9 @@ namespace ARES
     /// Replace( Str, Str, Str ) >> Str
     std::string
     Replace(std::string in_string, std::string look_for, std::string replace_with) {
+        std::string v;
         size_t x;
+        size_t b;
         size_t y = 0;
         size_t u = look_for.size();
         size_t n = in_string.size();
@@ -58,8 +80,9 @@ namespace ARES
             z.push_back(in_string.substr(y, x - y) + replace_with);
             y = x + u;
         }
-        std::string v = z[0];
-        for (size_t i = 1; i < z.size(); i++) {
+        b = z.size();
+        v = z[0];
+        for (size_t i = 1; i < b; i++) {
             v += z[i];
         }
         return v;
@@ -208,20 +231,67 @@ namespace ARES
         return (left + right) / 2;
     }
 
-    /// Random( Dbl, Dbl ) >> Dbl
+    /// Random( Dbl, Dbl, Lng ) >> Dbl
     long double
     Random(long double min, long double max, size_t seed = 0) {
         ++random_counter;
         static std::uniform_real_distribution<> urd(min, max);
-        static size_t rdm = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-        size_t rc = (rdm + random_counter) * (seed == 0) + seed;
+        size_t rc = (random_default_seed + random_counter) * (seed == 0) + seed;
         static std::default_random_engine dre(rc);
         return urd(dre);
+    }
+
+    /// RandomBol( Lng ) >> Bol
+    bool
+    RandomBol(size_t seed = 0) {
+        ++random_counter;
+        static std::uniform_real_distribution<> urd(0, 1);
+        size_t rc = (random_default_seed + random_counter) * (seed == 0) + seed;
+        static std::default_random_engine dre(rc);
+        return round(urd(dre));
     }
 
     /// Flip( Bol ) >> Bol
     bool
     Flip(bool boolean) {
         return !boolean;
+    }
+
+    // Date() >> Str
+    std::string
+    Date() {
+         std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        char buf[16] = { 0 };
+        std::strftime(buf, sizeof(buf), "%Y-%m-%d", std::localtime(&now));
+        return std::string(buf);
+    }
+
+    // Time() >> Str
+    std::string
+    Time() {
+        std::time_t now = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        char buf[16] = { 0 };
+        std::strftime(buf, sizeof(buf), "%H:%M:%S", std::localtime(&now));
+        return std::string(buf);
+    }
+
+    // TimeStamp() >> Lng
+    size_t
+    TimeStamp(bool milliseconds = false) {
+        if (milliseconds) {
+            return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        } else {
+            return std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+        }
+    }
+
+    namespace Sys
+    {
+
+    }
+
+    namespace App
+    {
+
     }
 }
