@@ -133,7 +133,7 @@
 
         If mainfunc Then
 
-            WriteCPP("ARES::Init();")
+            WriteCPP("ARES::__ARES_MAIN_INIT__();")
         End If
 
         Dim FcObj As New FunctionObject

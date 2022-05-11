@@ -90,7 +90,8 @@
         "Flip",
         "Date",
         "Time",
-        "TimeStamp"}
+        "TimeStamp",
+        "Str"}
 
     Public Shared standard_objects As List(Of String) = New List(Of String) From {
         "Sys",

@@ -73,7 +73,7 @@ Public Module Program
                 Console.WriteLine("Parser results:")
                 Console.WriteLine("")
 
-                For Each line_object In second_pass_line_objects ' Debug
+                For Each line_object In fourth_pass_line_objects ' Debug
 
                     For Each tk In line_object.token_list
 
@@ -147,6 +147,8 @@ Public Module Program
 
         Console.WriteLine("")
         Console.WriteLine("Finished translation to C++.")
+
+        File.Delete(OutFile)
 
         Try
             Process.Start(Compiler, Command)
@@ -495,16 +497,27 @@ Public Class Parser
 
             TempLO = New LineObject()
 
-            For Each tk In line_object.token_list
+            Dim i As Long = 0
+
+            For i = 0 To line_object.token_list.Count - 1
+
+                Dim tk = line_object.token_list(i)
 
                 temp_token = tk.token.Trim()
                 TempTK = New TokenCollection()
                 TempTK.token = temp_token
                 TempTK.context = tk.context
 
+                Dim next_token As New TokenCollection()
+                Try
+                    next_token = line_object.token_list(i + 1)
+                Catch
+
+                End Try
+
                 If tk.type = TokenType.UnParsed Then
 
-                    If ARES.types.Contains(temp_token) Then ' is Type
+                    If ARES.types.Contains(temp_token) And next_token.type <> TokenType.ArgStart Then ' is Type
 
                         TempTK.type = TokenType.IsType
 

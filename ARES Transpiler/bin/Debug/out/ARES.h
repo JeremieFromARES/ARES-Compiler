@@ -17,7 +17,7 @@ namespace ARES
 
     /// Private Init()
     void
-    Init() {
+    __ARES_MAIN_INIT__() {
         if (initialized) {return;}
         initialized = true;
         random_default_seed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
@@ -130,6 +130,16 @@ namespace ARES
     template <typename Var> std::string
     Append(std::string in_string, Var to_append) {
         return in_string.append(std::to_string(to_append));
+    }
+
+    template <typename ... Var> std::string
+    Str( Var ... args) {
+        std::string s = "";
+        using expander = int[];
+        (void)expander{0,
+            (void( s = ARES::Append(s, args) ), 0)...
+        };
+        return s;
     }
 
     /// Concat( Str, Str ) >> Str
