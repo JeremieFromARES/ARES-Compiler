@@ -36,6 +36,8 @@
         cpp_oh_proto.Add("// ARES - Overhead prototypes")
         For Each func In cpp_declared_functions
 
+            Debug.Print("Added " & func.Key & " to C++ Overhead Prototypes.")
+
             If func.Value.return_type = "" And func.Key = "main" Then
                 temp_line = "int " + func.Key + "( "
             ElseIf func.Value.return_type = "" Then
@@ -70,11 +72,14 @@
 
     Public Shared Sub PreDeclareFunction(ByRef function_name As String)
 
+        Debug.Print("Pre-Declared " & function_name & " As Function.")
         cpp_pre_declared_functions.Add(function_name)
 
     End Sub
 
     Public Shared Sub DeclareFunction(ByRef function_name As String, ByRef arguments As List(Of TokenCollection), Optional ByRef return_type As String = "")
+
+        Debug.Print("Declared  " & function_name & " As Function.")
 
         Translator.indentation += 1
 
@@ -106,11 +111,14 @@
 
                 temp_line += ARES.typesToCPP(arg.token)
                 temp_arg_types.Add(ARES.typesToCPP(arg.token))
-
             ElseIf arg.type = TokenType.IsName Then
 
                 temp_line += arg.token
 
+                Debug.Print("Declared " & arg.token & " As Variable since is argument.")
+                If Not cpp_declared_variables.ContainsKey(arg.token) Then
+                    cpp_declared_variables.Add(arg.token, "")
+                End If
             ElseIf arg.type = TokenType.IsOperator Then
 
                 temp_line += arg.token
@@ -140,16 +148,21 @@
         FcObj.return_type = return_type
         FcObj.argument_types = temp_arg_types
 
-        cpp_declared_functions.Add(function_name, FcObj)
+        If Not cpp_declared_functions.ContainsKey(function_name) Then
+            cpp_declared_functions.Add(function_name, FcObj)
+        End If
     End Sub
 
     Public Shared Sub PreDeclareObject(ByRef object_name As String)
 
+        Debug.Print("Pre-Declared " & object_name & " As Object.")
         cpp_pre_declared_objects.Add(object_name)
 
     End Sub
 
     Public Shared Sub DeclareObject(ByRef object_name As String)
+
+        Debug.Print("Declared " & object_name & " As Object.")
 
         Translator.object_def = True
 
@@ -168,11 +181,14 @@
 
     Public Shared Sub PreDeclareVariable(ByRef variable_name As String)
 
+        Debug.Print("Pre-Declared " & variable_name & " As Variable.")
         cpp_pre_declared_variables.Add(variable_name)
 
     End Sub
 
     Public Shared Sub DeclareVariable(ByRef variable_name As String, ByRef variable_type As String, ByRef arguments As List(Of TokenCollection))
+
+        Debug.Print("Declared " & variable_name & " As Variable.")
 
         Dim templine As String = String.Empty
 
@@ -205,7 +221,9 @@
         templine += ";"
         WriteCPP(templine)
 
-        cpp_declared_variables.Add(variable_name, variable_type)
+        If Not cpp_declared_variables.ContainsKey(variable_name) Then
+            cpp_declared_variables.Add(variable_name, variable_type)
+        End If
     End Sub
 
     Public Shared Sub AssignToVariable(ByRef variable_name As String, ByRef arguments As List(Of TokenCollection))
@@ -268,6 +286,28 @@
 
             temp_line = function_name
 
+        ElseIf function_name = "Cpp" Then
+
+            ErrorHandler.PrintWarning("Prevention", "the function Cpp prevents ARES to check for errors. Please use at your own risks.", Translator.line_counter)
+
+            Dim argcount As Integer = 0
+            For Each token In arguments
+                If token.token.Length <= 0 Then Continue For
+                argcount += 1
+
+                If Not token.token.Contains("""") Then
+                    ErrorHandler.PrintError("Syntax", "the function Cpp only takes constant strings as arguments due to it being a translation-time function.", Translator.line_counter)
+                End If
+
+                temp_line += Left(Right(token.token.Replace("\""", """"), token.token.Length - 1), token.token.Length - 2)
+            Next
+
+            If argcount < 1 Then
+                ErrorHandler.PrintError("Syntax", "the function Cpp does not accept more than one arguments.", Translator.line_counter)
+            End If
+
+            GoTo Skipargs
+
         ElseIf ARES.standard_functions.Contains(function_name) Then
 
             temp_line = "ARES::" + function_name
@@ -277,13 +317,15 @@
             temp_line += OOPhandler(function_name)
         Else
 
-            'ErrorHandler.PrintWarning("Syntax", $"type {function_name} is not defined.", Translator.line_counter)
-            temp_line = function_name
+            ErrorHandler.PrintError("Syntax", $"function {function_name} is not defined.", Translator.line_counter)
+            'temp_line = function_name
         End If
 
         temp_line += TranslateArgs(arguments)
-
         WriteCPP(temp_line + ";")
+        Exit Sub
+Skipargs:
+        WriteCPP(temp_line)
     End Sub
 
     Public Shared Sub DeclareIf(ByRef arguments As List(Of TokenCollection), Optional ByRef prefix As String = "")
@@ -293,7 +335,7 @@
         Dim temp_line As String
         temp_line = prefix
 
-        Dim temp_tokens As List(Of TokenCollection) = ConditionFormater(arguments)
+        Dim temp_tokens As List(Of TokenCollection) = arguments
 
         If temp_tokens.Count <> 0 Then
 
@@ -310,7 +352,7 @@
 
         Dim temp_line As String
 
-        Dim temp_tokens As List(Of TokenCollection) = ConditionFormater(arguments)
+        Dim temp_tokens As List(Of TokenCollection) = arguments
 
         If temp_tokens.Count <> 0 Then
 
@@ -323,24 +365,6 @@
         temp_line += "{"
         WriteCPP(temp_line)
     End Sub
-
-    Public Shared Function ConditionFormater(ByRef arguments As List(Of TokenCollection)) As List(Of TokenCollection)
-
-        Dim temp_tokens As List(Of TokenCollection) = arguments
-
-        For Each arg In temp_tokens
-
-            If arg.type = TokenType.IsOperator Then
-
-                If arg.token = "=" Then
-
-                    arg.token = "=="
-                End If
-            End If
-        Next
-
-        ConditionFormater = temp_tokens
-    End Function
 
     Public Shared Function OOPhandler(ByRef function_name As String) As String
 
@@ -365,13 +389,21 @@
 
                     Dim x As Integer
                     If Not Integer.TryParse(tmp, x) Then
-                        ErrorHandler.PrintWarning("Syntax", $"object {tmp} is not defined.", Translator.line_counter)
+                        ErrorHandler.PrintError("Syntax", $"object {tmp} is not defined.", Translator.line_counter)
                     End If
-                    temp_line += $"{tmp}."
+                    'temp_line += $"{tmp}."
                 End If
             Else
 
-                temp_line += temp_func
+                If cpp_pre_declared_functions.Contains(temp_func) Then
+                    temp_line += temp_func
+
+                ElseIf ARES.standard_functions.Contains(temp_func) Then
+                    temp_line += temp_func
+
+                Else
+                    ErrorHandler.PrintError("Syntax", $"function {temp_func} is not defined.", Translator.line_counter)
+                End If
             End If
         Next
 

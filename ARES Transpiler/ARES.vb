@@ -6,7 +6,7 @@
     Public Const arg_delimiter As Char = ","
     Public Const token_delimiter As Char = " "
 
-    Public Const kw_function As String = "Func"
+    Public Const kw_function As String = "Fn"
     Public Const kw_end As String = "End"
     Public Const kw_return As String = "Return"
     Public Const kw_if As String = "If"
@@ -26,10 +26,18 @@
         "Dci",
         "Flt",
         "Bol",
-        "Nul"}
+        "Nul",
+        "Str[]",
+        "Int[]",
+        "Sht[]",
+        "Lng[]",
+        "Dbl[]",
+        "Dci[]",
+        "Flt[]",
+        "Bol[]"}
 
     Public Shared typesToCPP As Dictionary(Of String, String) = New Dictionary(Of String, String) From {
-        {"Str", "std::string"},
+        {"Str", "ARES::Types::String"},
         {"Int", "long int"},
         {"Sht", "int"},
         {"Lng", "long long int"},
@@ -37,10 +45,18 @@
         {"Dci", "long double"},
         {"Flt", "float"},
         {"Bol", "bool"},
+        {"Str[]", "ARES::Types::Array<ARES::Types::String>"},
+        {"Int[]", "ARES::Types::Array<long int>"},
+        {"Sht[]", "ARES::Types::Array<int>"},
+        {"Lng[]", "ARES::Types::Array<long long int>"},
+        {"Dbl[]", "ARES::Types::Array<double>"},
+        {"Dci[]", "ARES::Types::Array<long double>"},
+        {"Flt[]", "ARES::Types::Array<float>"},
+        {"Bol[]", "ARES::Types::Array<bool>"},
         {"Nul", "void"}}
 
     Public Shared keywords As List(Of String) = New List(Of String) From {
-        "Func",
+        "Fn",
         "End",
         "Return",
         "If",
@@ -67,7 +83,6 @@
         "Print",
         "Input",
         "Split",
-        "GetToken",
         "Replace",
         "Append",
         "SubStr",
@@ -87,14 +102,25 @@
         "Min",
         "Average",
         "Random",
+        "RandomBol",
         "Flip",
+        "Now",
         "Date",
-        "Time",
-        "TimeStamp",
-        "Str"}
+        "DateToStr",
+        "Str",
+        "Insert",
+        "Delete",
+        "Contains",
+        "Count",
+        "IndexOf",
+        "Length",
+        "ExecTime",
+        "RemoveIndex"}
 
     Public Shared standard_objects As List(Of String) = New List(Of String) From {
         "Sys",
+        "Time",
+        "Debug",
         "App",
         "CPP"}
 End Class

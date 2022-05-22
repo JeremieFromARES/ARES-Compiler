@@ -18,7 +18,14 @@ Public Module Program
         Dim IsFromCL As Boolean = (args.Count <> 0)
         Dim showtranslatorresults As String
 
-        Console.WriteLine("ARES Transplier - alpha 1.0.7" & Environment.NewLine)
+        Console.ForegroundColor = ConsoleColor.DarkGray
+        Console.WriteLine("ARES Transpiler - a1.0.8")
+        Console.ForegroundColor = ConsoleColor.Blue
+        Console.WriteLine("            ___   ____  ____")
+        Console.WriteLine("   -|- //| || \\ ||___ //__ ")
+        Console.WriteLine("      //|| ||_// ||       \\")
+        Console.WriteLine("     // || || \\ ||___ \\_//")
+        Console.ForegroundColor = ConsoleColor.DarkGray
 
         Dim Compiler As String = "g++"
         Dim InFile As String = AppDomain.CurrentDomain.BaseDirectory + "out\out.ares.cpp"
@@ -34,8 +41,18 @@ Public Module Program
 
         If Not IsFromCL Then
 
-            Console.WriteLine("Please input the source code file's path or type 0, 1 to try out code snippets.")
-            source_file_path = Console.ReadLine()
+            Console.WriteLine("")
+            Console.WriteLine("")
+            Console.Write("ARES source code (")
+            Console.ForegroundColor = ConsoleColor.Blue
+            Console.Write(".ares")
+            Console.ForegroundColor = ConsoleColor.DarkGray
+            Console.Write(") absolute path:" & vbNewLine)
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.BackgroundColor = ConsoleColor.Gray
+            source_file_path = Console.ReadLine().Replace("\", "/").Replace("¥", "/").Replace("""", "")
+            Console.BackgroundColor = ConsoleColor.Black
+            Console.ForegroundColor = ConsoleColor.DarkGray
 
             Select Case source_file_path ' Code Snippets
                 Case "0"
@@ -47,7 +64,11 @@ Public Module Program
             End Select
 
             Console.WriteLine("Show parser/transpiler results? (debug purposes). [Y/n]")
+            Console.ForegroundColor = ConsoleColor.Black
+            Console.BackgroundColor = ConsoleColor.Gray
             showtranslatorresults = Console.ReadLine()
+            Console.BackgroundColor = ConsoleColor.Black
+            Console.ForegroundColor = ConsoleColor.DarkGray
         End If
 
         Parser.Init()
@@ -68,12 +89,16 @@ Public Module Program
                 Dim line_object As LineObject
                 Dim tk As TokenCollection
                 Dim str As String
+                Dim ln_cn As Long
 
                 Console.WriteLine("")
-                Console.WriteLine("Parser results:")
+                Console.WriteLine("Parser results")
                 Console.WriteLine("")
 
                 For Each line_object In fourth_pass_line_objects ' Debug
+
+                    ln_cn += 1
+                    Console.Write(ln_cn & " ")
 
                     For Each tk In line_object.token_list
 
@@ -110,7 +135,7 @@ Public Module Program
                 Next
 
                 Console.WriteLine("")
-                Console.WriteLine("Translator results:")
+                Console.WriteLine("Translator results")
                 Console.WriteLine("")
 
                 For Each line In CPPwriter.final_cpp_lines ' Debug
@@ -131,41 +156,55 @@ Public Module Program
 
         End If
 
+        File.Delete(OutFile)
+
         If ErrorHandler.ErrorCounter > 0 Then
 
             Console.WriteLine("")
-            Console.WriteLine($"Terminated program with {ErrorHandler.ErrorCounter} errors.")
+            ErrorHandler.PrintWarning("Error checking", $"terminated translation due to {ErrorHandler.ErrorCounter} errors.")
             GoTo Ending
         End If
 
         Try
             File.WriteAllLines(InFile, CPPwriter.final_cpp_lines)
         Catch
-            ErrorHandler.PrintError("Critical", "could not write file " & InFile)
+            ErrorHandler.PrintError("Critical", "could Not write file " & InFile)
             GoTo Ending
         End Try
 
-        Console.WriteLine("")
-        Console.WriteLine("Finished translation to C++.")
+        Console.WriteLine("# Finished translation to intermediate C++.")
 
-        File.Delete(OutFile)
+        Console.WriteLine("# Started g++ with command " + Command)
 
         Try
             Process.Start(Compiler, Command)
         Catch
-            ErrorHandler.PrintError("Critical", "a MingW (g++) installation is required for executable compilation.")
+            Debug.Print("! Compiler : Error due to missing MingW/MingW_64 installation. Note that this issue can also occur due to missing system variable to the MingW's directory.")
+            ErrorHandler.PrintError("Critical", "a MingW/MingW_64 (g++) installation is required for executable compilation." & Environment.NewLine & "If MingW is already installed please make sure that you have correctly setup the system variable pointing to it's directory")
             GoTo Ending
         End Try
 
-        Console.WriteLine("")
-        Console.WriteLine("Started embeded g++ with command " + Command)
+        If Not File.Exists(OutFile) Then
+            Threading.Thread.Sleep(2500)
+            If Not File.Exists(OutFile) Then
+                Debug.Print("! Compiler : Error due to unhandled error while translating. Please refer to C:/ARES/out/out.ares.cpp to debug manually.")
+                ErrorHandler.PrintError("Critical", "g++ could not finish compilation due to unhandled ARES error.")
+                GoTo Ending
+            End If
+        End If
+        Console.WriteLine("# Compilation completed.")
+        Debug.Print("# Compiler - Finished Compilation")
 
         Console.WriteLine("")
         Console.WriteLine("The compiled executable file can be found at:")
+        Console.ForegroundColor = ConsoleColor.Black
+        Console.BackgroundColor = ConsoleColor.Gray
         Console.WriteLine(OutFile)
-
+        Console.BackgroundColor = ConsoleColor.Black
+        Console.ForegroundColor = ConsoleColor.DarkGray
+        Console.WriteLine(" ")
 Ending:
-
+        Debug.Print("# ARES - Program Ended - Waiting for input.")
         If Not IsFromCL Then
             Console.ReadLine()
         End If
@@ -178,24 +217,32 @@ Public Class Parser
 
         source_lines = File.ReadAllLines(source_file_path)
 
+        Debug.Print("# Parse - First pass ...")
         ParseFirstPass() ' Separates Strings and non-Strings
         source_lines = Nothing
+        Debug.Print("# Parse - Second pass ...")
         ParseSecondPass() ' Separates arguments
         ' first_pass_line_objects = Nothing
+        Debug.Print("# Parse - Third pass ...")
         ParseThirdPass() ' Separates tokens using spaces and formating
         ' second_pass_line_objects = Nothing
+        Debug.Print("# Parse - Fourth pass ...")
         ParseFourthPass() ' Separates Keywords, Names, Types and Operators
         ' third_pass_line_objects = Nothing
 
         Console.WriteLine("")
-        Console.WriteLine("Finished ARES parsing")
+        Console.WriteLine("# Finished ARES parsing")
 
         If translated_to = "cpp" Then
 
+            Debug.Print("# Translator - First pass ...")
             Translator.TranslateCppFirstPass()
+            Debug.Print("# Translator - Second pass ...")
             Translator.TranslateCppSecondPass()
+            Debug.Print("# Translator - Finilizing ...")
             CPPwriter.DefineOverheadPrototypes()
             CPPwriter.FinilizeLines()
+            Debug.Print("# Compiler - Compilation ...")
         End If
     End Sub
 
@@ -205,14 +252,20 @@ Public Class Parser
 
         For Each line In Program.source_lines ' For each line in source file
 
+            If line.Contains("§$§@#") Then
+
+                ErrorHandler.PrintError("Syntax", "the term ""§$§@#"" is reserved by the translator.")
+            End If
+
             ' Formating
             Dim temp_line = line.Trim()
             temp_line = Regex.Replace(temp_line, "//.*", "") ' Removes Commented lines
-            temp_line = Regex.Replace(temp_line, "\\.*", "")
+            temp_line = Regex.Replace(temp_line, "\\\\.*", "")
+            temp_line = Regex.Replace(temp_line, "\\""", "§$§@#")
 
             Dim parsed_line As New LineObject
 
-            If temp_line = String.Empty Then Continue For
+            'If temp_line = String.Empty Then Continue For
             If temp_line.Contains(ARES.string_indicator) Then ' Does line contain a " ?
 
                 Dim string_join_flip As Boolean = False
@@ -363,8 +416,6 @@ Public Class Parser
                                     tc2.context = arg_context
                                     parsed_line.token_list.Add(tc2)
 
-                                    Debug.Print(line_char)
-
                                     arg_context -= 1
 
                                 End If
@@ -410,9 +461,6 @@ Public Class Parser
                             End If
                         Else
 
-                            Debug.Print(tk.token)
-                            Debug.Print(temp_token)
-
                             If Not String.IsNullOrEmpty(temp_token) Then
                                 Dim tc As New TokenCollection
                                 tc.token = temp_token.Trim()
@@ -435,6 +483,10 @@ Public Class Parser
                         End If
                     End If
                 Else
+
+                    If tk.type = TokenType.IsString Then
+                        tk.token = tk.token.Replace("§$§@#", "\""")
+                    End If
 
                     If is_argument Then
                         Dim tc As New TokenCollection
@@ -567,6 +619,8 @@ Public Class Translator
             line_counter += 1
             tk_list = line_object.token_list
 
+            If tk_list.Count = 0 Then Continue For
+
             If tk_list(0).type = TokenType.IsKeyword Then ' Is Keyword
 
                 If tk_list(0).token = ARES.kw_function Then ' Is Function declaration
@@ -602,6 +656,8 @@ Public Class Translator
             temp_arg_list = Nothing
             tk_list = line_object.token_list
 
+            If tk_list.Count = 0 Then Continue For
+
             If tk_list(0).type = TokenType.IsKeyword Then ' Is Keyword
 
                 If tk_list(0).token = ARES.kw_function Then ' Is Function declaration
@@ -611,6 +667,10 @@ Public Class Translator
 
                     If tk_list(tk_list.Count - 2).token = ARES.kw_returns_type Then
 
+                        return_type = tk_list(tk_list.Count - 1).token
+                    End If
+
+                    If ARES.typesToCPP.Keys.Contains(tk_list(tk_list.Count - 1).token) Then
                         return_type = tk_list(tk_list.Count - 1).token
                     End If
 
@@ -689,6 +749,14 @@ Public Class Translator
                 ElseIf CPPwriter.cpp_pre_declared_objects.Contains(tk_list(0).token) Then
 
 
+                ElseIf Right(tk_list(0).token, 2) = "++" Then 'Increment variable
+
+                    If CPPwriter.cpp_pre_declared_variables.Contains(Left(tk_list(0).token, tk_list(0).token.Length - 2)) Then
+                        CPPwriter.WriteCPP(tk_list(0).token & ";")
+                    Else
+                        ErrorHandler.PrintError("Syntax", $"Cannot increment {Left(tk_list(0).token, tk_list(0).token.Length - 2)} since it is not defined.", line_counter)
+                    End If
+
                 Else
 
                     temp_arg_list = Helper.GetLineTokens(tk_list, 1, tk_list(0).context) ' TO CHANGE BACK TO getFuncArgs IF NOT WORKING
@@ -714,13 +782,13 @@ Public Class Helper
 
             ReturnArray.Add(token_list(i))
 
-            If token_list(i).type = TokenType.Terminator Then
+            'If token_list(i).type = TokenType.Terminator Then
 
-                If token_list(i).context - 1 = 0 Then
+            '    If token_list(i).context - 1 = 0 Then
 
-                    Exit For
-                End If
-            End If
+            '        Exit For
+            '    End If
+            'End If
         Next i
 
         Return ReturnArray
@@ -806,25 +874,33 @@ Public Class ErrorHandler
         ErrorCounter += 1
 
         If line = -1 Then
+            Console.ForegroundColor = ConsoleColor.Red
             Console.WriteLine("----------------------------------------------------------------------------------")
             Console.WriteLine("/!\ ERROR /!\ : " & context & " error, " & description)
             Console.WriteLine("----------------------------------------------------------------------------------")
+            Console.ForegroundColor = ConsoleColor.DarkGray
         Else
+            Console.ForegroundColor = ConsoleColor.Red
             Console.WriteLine("----------------------------------------------------------------------------------")
             Console.WriteLine("/!\ ERROR /!\ : " & context & " error, at line " & line & " : " & description)
             Console.WriteLine("----------------------------------------------------------------------------------")
+            Console.ForegroundColor = ConsoleColor.DarkGray
         End If
     End Sub
 
     Public Shared Sub PrintWarning(ByRef context As String, ByRef description As String, Optional ByRef line As Long = -1)
         If line = -1 Then
+            Console.ForegroundColor = ConsoleColor.Yellow
             Console.WriteLine("----------------------------------------------------------------------------------")
             Console.WriteLine("/!\ WARNING /!\ : " & context & " warning, " & description)
             Console.WriteLine("----------------------------------------------------------------------------------")
+            Console.ForegroundColor = ConsoleColor.DarkGray
         Else
+            Console.ForegroundColor = ConsoleColor.Yellow
             Console.WriteLine("----------------------------------------------------------------------------------")
             Console.WriteLine("/!\ WARNING /!\ : " & context & " warning, at line " & line & " : " & description)
             Console.WriteLine("----------------------------------------------------------------------------------")
+            Console.ForegroundColor = ConsoleColor.DarkGray
         End If
     End Sub
 End Class

@@ -1,5 +1,5 @@
 // Using the ARES language 2022, under GPL3 license.
-// Transpile date: 2022/42/11 09:42:21
+// Transpile date: 2022/50/21 04:50:09
 
 // ARES - Headers
 #include "ARES.h"
@@ -14,17 +14,21 @@ int main() {
 ARES::__ARES_MAIN_INIT__();
 ARES::Print( "Start");
 long long int time = ARES::TimeStamp(true);
-long long int bound =200;
-long long int x =1;
-long long int y =1;
+long long int bound =8000;
+long long int x =0;
+long long int y =0;
+long long int rdm;
+ARES::Types::Array<long long int> rdm_array;
+std::vector<long long int> rdm_vec;
 while ( x< bound) {
-++x;
-y =1;
+x++;
+y =0;
 while ( y< bound) {
-++y;
-ARES::Print( ARES::Str( x, ":", y));
+y++;
+rdm = ARES::Round( ARES::Random(0,100),0);
+rdm_array.Add( rdm);
 };
 };
-ARES::Print( ARES::Add( ARES::Add( "Exec took : ", ARES::TimeStamp(true) - time), "ms"));
-ARES::Print( "002");
+ARES::Print( ARES::Str( "Execution took : \"", ARES::TimeStamp(true) -time, "\"ms"));
+ARES::Print(rdm_array.Count());
 };
